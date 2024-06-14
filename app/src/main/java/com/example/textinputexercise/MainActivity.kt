@@ -1,6 +1,7 @@
 package com.example.textinputexercise
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -19,11 +20,14 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionContext
+import androidx.compose.runtime.CompositionLocalContext
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -64,12 +69,13 @@ fun PageWithScaffold(){
         Column(
             modifier = Modifier.padding(innerPadding)
         ) {
+            val context = LocalContext.current
 
-            TextField(
+            OutlinedTextField(
                 value = newUserNameInput,
+                shape = RoundedCornerShape(50.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(20.dp))
                     .padding(20.dp, 20.dp),
                 onValueChange = {
                     newUserNameInput = it
@@ -77,7 +83,18 @@ fun PageWithScaffold(){
                 placeholder = { Text(text = "Digite seu nome") },
                 suffix = {
                     IconButton(onClick = {
-                        userName = newUserNameInput
+                        val stringTrimmed = newUserNameInput.trim()
+                        if(stringTrimmed != ""){
+                            if (!isThereANumber(stringTrimmed))
+                                userName = newUserNameInput
+                            else
+                                Toast.makeText(context, "Somente são aceitos caracteres alfabéticos",
+                                    Toast.LENGTH_LONG).show()
+                        }
+                        else{
+                            Toast.makeText(context, "Não pode estar vazio",
+                                Toast.LENGTH_LONG).show()
+                        }
                     }) {
                         Icon(imageVector = Icons.Filled.Search, contentDescription = "Search")
                     }
@@ -85,6 +102,11 @@ fun PageWithScaffold(){
             )
         }
     }
+}
+
+fun isThereANumber(string:String):Boolean{
+    val regex = "\\d".toRegex()
+    return regex.containsMatchIn(string)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
