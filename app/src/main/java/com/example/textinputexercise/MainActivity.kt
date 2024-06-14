@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun PageWithScaffold(){
     Scaffold(
-        topBar = {TopBar("Rosi")},
+        topBar = {TopBar("Caio")},
         modifier = Modifier.fillMaxSize()) { innerPadding ->
         Column(
             modifier = Modifier.padding(innerPadding)
